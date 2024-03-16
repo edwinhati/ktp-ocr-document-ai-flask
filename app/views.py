@@ -1,9 +1,10 @@
-from flask import Flask, request, jsonify
+
+from app import app
+from flask import request, jsonify
 from werkzeug.utils import secure_filename
+
 from google.cloud import documentai_v1 as documentai
 from google.api_core.client_options import ClientOptions
-
-app = Flask(__name__)
 
 options = ClientOptions(api_endpoint="us-documentai.googleapis.com")
 client = documentai.DocumentProcessorServiceClient(client_options=options)
@@ -14,6 +15,7 @@ name = client.processor_version_path(
     "751f444c2d36cdb6",
     "pretrained-foundation-model-v1.0-2023-08-22",
 )
+
 
 
 @app.route("/extract/", methods=["POST"])
