@@ -18,7 +18,7 @@ name = client.processor_version_path(
 
 
 
-@app.route("/extract/", methods=["POST"])
+@app.route("/extract", methods=["POST"])
 def process_document():
     try:
         file = request.files["file"]
