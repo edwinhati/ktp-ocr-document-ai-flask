@@ -1,3 +1,4 @@
+
 from app import app
 from flask import request, jsonify
 from werkzeug.utils import secure_filename
@@ -15,16 +16,14 @@ name = client.processor_version_path(
     "pretrained-foundation-model-v1.0-2023-08-22",
 )
 
-@app.route("/")
-def index():
-    return "Hello, World!"
+
 
 @app.route("/extract/", methods=["POST"])
 def process_document():
     try:
         file = request.files["file"]
         if file:
-            filename = secure_filename(file.filename)
+            secure_filename(file.filename)
             file_stream = file.read()
 
             raw_document = documentai.RawDocument(
@@ -48,8 +47,8 @@ def process_document():
         else:
             return jsonify({"error": "No file provided"}), 400
     except Exception as e:
-        print(f"Exception occurred: {e}")
         return jsonify({"error": str(e)}), 500
+
 
 if __name__ == "__main__":
     app.run(debug=True)
