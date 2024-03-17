@@ -1,6 +1,20 @@
-FROM tiangolo/uwsgi-nginx-flask:python3.8-alpine
-RUN apk --update add bash nano
-ENV STATIC_URL /static
-ENV STATIC_PATH /var/www/app/static
-COPY ./requirements.txt /var/www/requirements.txt
-RUN pip install -r /var/www/requirements.txt
+# Use an official Python runtime as a parent image
+FROM python:3.9-slim-buster
+
+# Set the working directory in the container to /app
+WORKDIR /app
+
+# Add the current directory contents into the container at /app
+ADD . /app
+
+# Install any needed packages specified in requirements.txt
+RUN pip install --no-cache-dir -r requirements.txt
+
+# Make port 80 available to the world outside this container
+EXPOSE 80
+
+# Set environment variable
+ENV NAME World
+
+# Run app.py when the container launches
+CMD ["gunicorn", "-w 4", "-b 0.0.0.0:80", "app:app"]
