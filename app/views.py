@@ -15,6 +15,10 @@ name = client.processor_version_path(
     "pretrained-foundation-model-v1.0-2023-08-22",
 )
 
+@app.route("/")
+def index():
+    return "Hello, World!"
+
 @app.route("/extract/", methods=["POST"])
 def process_document():
     try:
