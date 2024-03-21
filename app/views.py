@@ -1,8 +1,8 @@
-
 from app import app
 from flask import request, jsonify
 from werkzeug.utils import secure_filename
 
+from google.cloud import storage
 from google.cloud import documentai_v1 as documentai
 from google.api_core.client_options import ClientOptions
 
@@ -15,7 +15,6 @@ name = client.processor_version_path(
     "751f444c2d36cdb6",
     "pretrained-foundation-model-v1.0-2023-08-22",
 )
-
 
 
 @app.route("/extract", methods=["POST"])
@@ -46,6 +45,39 @@ def process_document():
             return jsonify(ktp)
         else:
             return jsonify({"error": "No file provided"}), 400
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+
+
+@app.route("/upload-ktp", methods=["POST"])
+def upload_ktp():
+    try:
+        if "file" not in request.files:
+            return jsonify({"error": "No file provided"}), 400
+
+        file = request.files["file"]
+        if file.filename == "":
+            return jsonify({"error": "No file selected"}), 400
+
+        filename = secure_filename(file.filename)
+        client = storage.Client()
+        bucket = client.get_bucket("dharmapongrekun_ktp_bucket")
+        blob = bucket.blob(filename)
+        blob.upload_from_file(file)
+
+        download_url = (
+            f"https://storage.googleapis.com/dharmapongrekun_ktp_bucket/{filename}"
+        )
+
+        return (
+            jsonify(
+                {
+                    "download_url": download_url,
+                }
+            ),
+            200,
+        )
+
     except Exception as e:
         return jsonify({"error": str(e)}), 500
 

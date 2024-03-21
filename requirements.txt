@@ -26,4 +26,5 @@ rsa==4.9
 urllib3==2.2.1
 Werkzeug==3.0.1
 flask-cors
+google-cloud-storage
 
