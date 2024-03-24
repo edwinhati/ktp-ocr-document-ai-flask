@@ -2,9 +2,6 @@ from app import app
 from flask import request, jsonify
 from werkzeug.utils import secure_filename
 
-from PIL import Image
-from rembg import remove
-
 from google.cloud import storage
 from google.cloud import documentai_v1 as documentai
 from google.api_core.client_options import ClientOptions
@@ -83,22 +80,6 @@ def upload_ktp():
 
     except Exception as e:
         return jsonify({"error": str(e)}), 500
-
-
-@app.route("/remback", methods=["POST"])
-def remback():
-    file = request.files["file"]
-    if file and allowed_file(file.filename):
-        filename = secure_filename(file.filename)
-        file.save(os.path.join(app.config["UPLOAD_FOLDER"], filename))
-        rembg_img_name = filename.split(".")[0] + "_rembg.png"
-        remove_background(
-            UPLOAD_FOLDER + "/" + filename, UPLOAD_FOLDER + "/" + rembg_img_name
-        )
-        return render_template(
-            "home.html", org_img_name=filename, rembg_img_name=rembg_img_name
-        )
-
 
 if __name__ == "__main__":
     app.run(debug=True)

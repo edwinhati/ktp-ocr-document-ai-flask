@@ -27,5 +27,3 @@ urllib3
 Werkzeug
 flask-cors
 google-cloud-storage
-onnxruntime
-rembg
