@@ -1,6 +1,9 @@
+import base64
 from app import app
 from flask import request, jsonify
 from werkzeug.utils import secure_filename
+
+from rembg import remove
 
 from google.cloud import storage
 from google.cloud import documentai_v1 as documentai
@@ -48,6 +51,23 @@ def process_document():
     except Exception as e:
         return jsonify({"error": str(e)}), 500
 
+@app.route("/remove", methods=["POST"])
+def remove_backgroud():
+    try:
+        file = request.files["file"]
+        if file:
+            secure_filename(file.filename)
+            file_stream = file.read()
+
+            output = remove(file_stream)
+
+            return jsonify({"output": base64.b64encode(output).decode("utf-8")})
+        else:
+            return jsonify({"error": "No file provided"}), 400
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500    
+
+    
 
 @app.route("/upload-ktp", methods=["POST"])
 def upload_ktp():
